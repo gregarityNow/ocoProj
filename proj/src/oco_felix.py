@@ -45,6 +45,7 @@ except Exception as ex:
         df["vecNorm"] = df.vec.apply(lambda vec: np.concatenate([vec/255,[1]]))
     with open(dataLoc,"wb") as fp:
         pickle.dump(data, fp)
+    print("dumped to",dataLoc)
 
 
 def show(row):
