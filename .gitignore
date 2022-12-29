@@ -1,0 +1,10 @@
+*.npz
+*.csv
+*.pyc
+*.pickle
+.idea/*
+*.ipynb
+*.ipynb_checkpoints
+img/*
+venv/
+venv
