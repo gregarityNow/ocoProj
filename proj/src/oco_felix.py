@@ -25,9 +25,10 @@ pathlib.Path("./img").mkdir(exist_ok=True,parents=True)
 import urllib.request
 import json
 
+dataLoc = "/tmp/f002nb9/oco/mnist.pickle"
 try:
     #https://pjreddie.com/media/files/mnist_train.csv
-    with open("mnist.pickle","rb") as fp:
+    with open(dataLoc,"rb") as fp:
         data = pickle.load(fp)
 except Exception as ex:
     print("no mnist.pickle",ex)
@@ -41,6 +42,8 @@ except Exception as ex:
     for df in data.values():
         df["b_label"] = df.label.apply(lambda x: 2*int((x == 0))-1)
         df["vecNorm"] = df.vec.apply(lambda vec: np.concatenate([vec/255,[1]]))
+    with open(dataLoc,"wb") as fp:
+        pickle.dump(data, fp)
 
 
 def show(row):
@@ -416,7 +419,8 @@ def newtonONSStep(batch_x, batch_y, params, regLamb, projDim, gamma):
     grad_hinge_w, loss = comp_grad_hinge(params["w"], batch_x, batch_y, regLamb)
     
     gradMatrix = grad_hinge_w.reshape(-1,1)@grad_hinge_w.reshape(1,-1)
-    
+
+
     A = params["A"] + gradMatrix
     
     
