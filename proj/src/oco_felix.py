@@ -21,6 +21,7 @@ pathlib.Path("./img").mkdir(exist_ok=True,parents=True)
 
 allResultsPath = "./results.pickle"
 indivResultsPath = "./results"
+imgOutPath = "./img"
 
 
 import urllib.request
@@ -650,7 +651,7 @@ def plot_results(d, title):
     ax.legend(lns, labs,loc="lower right")
     plt.title(title)
 
-    plt.savefig("./img/"+d["descType"]+"_"+str(d["projDim"])+"_"+str(d["projDim"])+"_"+str(time.time())+".png");
+    plt.savefig(imgOutPath + "/"+d["descType"]+"_"+str(d["projDim"])+"_"+str(d["projDim"])+"_"+str(time.time())+".png");
 
 
 def write(d):

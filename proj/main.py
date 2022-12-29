@@ -22,7 +22,10 @@ import shutil
 def main():
 
 	if opt.purge:
-		shutil.rmtree()
+		print("purging!")
+		shutil.rmtree(indivResultsPath)
+		shutil.rmtree(allResultsPath)
+		shutil.rmtree(imgOutPath)
 
 	if "gradDesc" in opt.descType:
 		mainHypSearch("gradDesc")
