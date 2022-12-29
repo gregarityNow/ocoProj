@@ -644,7 +644,7 @@ def plot_results(d, title):
     ax.legend(lns, labs,loc="lower right")
     plt.title(title)
 
-    plt.savefig("./img/"+d["descType"]+"_"+str(d["projDim"])+"_"+str(d["projDim"])+"_"+str(time.time()));
+    plt.savefig("./img/"+d["descType"]+"_"+str(d["projDim"])+"_"+str(d["projDim"])+"_"+str(time.time())+".png");
 
 
 def write(d):
