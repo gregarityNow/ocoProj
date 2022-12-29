@@ -32,7 +32,7 @@ try:
         data = pickle.load(fp)
 except Exception as ex:
     print("no mnist.pickle",ex)
-    pathlib.Path(dataLoc).mkdir(parents=True,exist_ok=True)
+    pathlib.Path(dataLoc[:dataLoc.index("mnist")]).mkdir(parents=True,exist_ok=True)
     data = {}
     for name in ["test","train"]:
         with urllib.request.urlopen('https://pjreddie.com/media/files/mnist_'+name+'.csv') as link:
