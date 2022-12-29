@@ -621,6 +621,7 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
     else:
         title += "without projection"
     plot_results(d, title)
+    write(d)
     
     return d
 
