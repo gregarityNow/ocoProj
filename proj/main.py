@@ -13,11 +13,17 @@ parser.add_argument("-quickie",type=int,default = 0)
 parser.add_argument("-descType",type=str);
 parser.add_argument("-gamma",type=float,default=1/8);
 parser.add_argument("-projDim",type=float,default=1);
+parser.add_argument("-purge",type=float,default=0);
 
 
 opt = parser.parse_args()
+import shutil
 
 def main():
+
+	if opt.purge:
+		shutil.rmtree()
+
 	if "gradDesc" in opt.descType:
 		mainHypSearch("gradDesc")
 	if "mirrDesc" in opt.descType:

@@ -19,7 +19,8 @@ import pathlib
 pathlib.Path("./indivResults").mkdir(exist_ok=True,parents=True)
 pathlib.Path("./img").mkdir(exist_ok=True,parents=True)
 
-
+allResultsPath = "./results.pickle"
+indivResultsPath = "./results"
 
 
 import urllib.request
@@ -653,14 +654,14 @@ def plot_results(d, title):
 
 
 def write(d):
-    with open("./results.pickle","rb") as fp:
-        results = pickle.load(d)
+    with open(allResultsPath,"rb") as fp:
+        results = pickle.load(fp)
 
     results.append(d)
-    with open("./results.pickle","wb") as fp:
+    with open(allResultsPath,"wb") as fp:
         pickle.dump(results, fp);
 
     path = str(time.time())
-    with open("./indivResults/"+path, "wb") as fp:
+    with open(indivResultsPath + "/" +path, "wb") as fp:
         pickle.dump(d,fp);
 
