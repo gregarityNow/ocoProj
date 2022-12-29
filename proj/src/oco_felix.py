@@ -505,8 +505,15 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
         lr = lrStrat
         
     numBatches = int(np.ceil(len(x_train)/batch_size))
+
+    d = {}
+    d["regLamb"] = regLamb
+    d["projDim"] = projDim
+    d["batch_size"] = batch_size
+    d["descType"] = descType
+    d["n_epochs"] = n_epochs
     
-    print("iterating",descType,"for ",n_epochs,"with batch_size",batch_size)
+    print("iterating", d)
     
     runtime = time.time()
 
@@ -594,18 +601,15 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
         data["test"]["preds"] = data["test"].vecNorm.apply(lambda x: np.sign(w@x))
         
     runtime = time.time()-runtime
-    d = {}
+
+
+    d["w_size"] = np.linalg.norm(w)
     d["runtime"] = runtime
     d["loss"] = allLosses
     d["accTrain"] = allAccsTrain
     d["accTest"] = allAccsTest
     d["accTestSimple"] = allAccsTestSimple
     d["accTrainSimple"] = allAccsTrainSimple
-    d["w_size"] = np.linalg.norm(w)
-    d["regLamb"] = regLamb
-    d["projDim"] = projDim
-    d["batch_size"] = batch_size
-    d["descType"] = descType
 
     title = ""
     if batch_size > 0:
