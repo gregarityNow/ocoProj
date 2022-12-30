@@ -15,6 +15,7 @@ parser.add_argument("-projDim",type=float,default=1);
 parser.add_argument("-purge",type=float,default=0);
 parser.add_argument("-bw",type=int,default=1);
 parser.add_argument("-batch_size",type=int,default=1);
+# parser.add_argument("-n_epochs",type=int,default=100000);
 
 
 opt = parser.parse_args()
@@ -40,8 +41,6 @@ def main():
 	if "bandExp" in opt.descType:
 		expHypSearch("bandExp")
 
-
-
 def mainHypSearch(descType, n_epochs=500):
 
 	for batch_size in [4,16,64,-1]:
@@ -66,9 +65,9 @@ def newtonHypSearch(descType, n_epochs=5000):
 
 
 
-def expHypSearch(descType, n_epochs=50000):
+def expHypSearch(descType, n_epochs=100000):
 
-	for batch_size in [32,64,-1][::opt.bw]:
+	for batch_size in [64]:
 		try:
 			gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=0, fake=False,
 						 easyBin=False, projDim=opt.projDim, quickie=opt.quickie, descType=descType)
