@@ -40,7 +40,7 @@ def main():
 	if "bandExp" in opt.descType:
 		expHypSearch("bandExp")
 
-def mainHypSearch(descType, n_epochs=(5000 if opt.n_epochs == -1 else opt.n_epochs)):
+def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
 	for projDim in [1,10,100,-1][::opt.bw]:
 		for regLamb in [0,0.2,1]:
@@ -50,7 +50,7 @@ def mainHypSearch(descType, n_epochs=(5000 if opt.n_epochs == -1 else opt.n_epoc
 			except:
 				print("oh bother",opt.batch_size, projDim, regLamb)
 
-def newtonHypSearch(descType, n_epochs=(5000 if opt.n_epochs == -1 else opt.n_epochs)):
+def newtonHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
 	# for batch_size in [64,32,-1][::opt.bw]:
 	for projDim in [1,10,100,-1][::opt.bw]:
