@@ -17,6 +17,7 @@ parser.add_argument("-bw",type=int,default=1);
 parser.add_argument("-batch_size",type=int,default=1);
 parser.add_argument("-n_epochs",type=int,default=-1);
 parser.add_argument("-raiseExc",type=int,default=0);
+parser.add_argument("-practice",type=int,default=0);
 
 
 opt = parser.parse_args()
@@ -47,7 +48,7 @@ def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epo
 	for projDim in [1,10,100,-1][::opt.bw]:
 		for regLamb in [0,0.2,1]:
 			try:
-				gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=regLamb, fake=False,
+				gradient_descent(data, opt, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=regLamb, fake=False,
 							 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
 			except Exception as e:
 				print("oh bother",opt.batch_size, projDim, regLamb)
@@ -60,7 +61,7 @@ def newtonHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_e
 	for projDim in [1,10,100,-1][::opt.bw]:
 		for regLamb in [0,0.2,1]:
 			try:
-				gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=regLamb, fake=False,
+				gradient_descent(data, opt, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=regLamb, fake=False,
 							 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType,gamma=opt.gamma)
 			except:
 				pass
@@ -70,7 +71,7 @@ def expHypSearch(descType, n_epochs=(100000 if opt.n_epochs == -1 else opt.n_epo
 
 	for projDim in [1,10,100][::opt.bw]:
 		try:
-			gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=0, fake=False,
+			gradient_descent(data, opt, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=0, fake=False,
 						 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
 		except:
 			print("oh bother",opt.batch_size, projDim)
