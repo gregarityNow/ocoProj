@@ -474,7 +474,7 @@ def get_lr(descType, lrStrat, epoch, lr, d):
             if descType == "randExp":
                 lr = np.sqrt(1/((1+epoch)*d))
             elif descType == "bandExp":
-                lr = np.sqrt(0.11/((1+epoch)*d))
+                lr = np.sqrt(1/((1+epoch)*d))
             # elif epoch < 10:
             #     lr = 1
             elif descType == "gradDesc":
@@ -564,8 +564,7 @@ def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs 
         for batch in range(numBatches):
             
             idx = idxEpoch[batch*batch_size:(batch+1)*batch_size]
-            idxFullBatch = idxEpoch[:100]
-            
+
             batch_x = x_train[:,idx]
             batch_y = y_train[idx]
 
@@ -615,7 +614,7 @@ def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs 
             epochAccsTrainSimple.append(accTrainSimple)
             epochAccsTestSimple.append(accTestSimple)
 
-            break
+            # break
 
         allLosses.append(np.mean(epochLosses))
         allAccsTrain.append(np.mean(epochAccsTrain))
