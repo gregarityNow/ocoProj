@@ -485,7 +485,7 @@ tqdm = partial(tqdm, position=0, leave=True)
 
 
 
-def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1, regLamb = 1,fake = False,
+def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = 1, regLamb = 1,fake = False,
                      easyBin = False, projDim = -1, decInterval = 200, quickie = 0, descType ="gradDesc", gamma=1/8):
     '''
     :param data: dataframe containing train and test data
@@ -533,7 +533,7 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
     runtime = time.time()
 
     for epoch in tqdm(range(n_epochs)):
-        
+
         epochLosses = []
         epochAccsTrain = []
         epochAccsTrainSimple = []
@@ -544,7 +544,6 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
         
         lr = get_lr(descType, lrStrat, epoch, lr, d = x_train.shape[0])
 
-        
         for batch in range(numBatches):
             
             idx = idxEpoch[batch*batch_size:(batch+1)*batch_size]
@@ -592,6 +591,9 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
 
             epochAccsTrainSimple.append(accTrainSimple)
             epochAccsTestSimple.append(accTestSimple)
+
+            if batch_size == 1:
+                break
             
             
         allLosses.append(np.mean(epochLosses))
@@ -645,7 +647,6 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
     write(d)
     
     return d
-
 
 
 

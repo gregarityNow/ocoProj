@@ -15,7 +15,7 @@ parser.add_argument("-projDim",type=float,default=1);
 parser.add_argument("-purge",type=float,default=0);
 parser.add_argument("-bw",type=int,default=1);
 parser.add_argument("-batch_size",type=int,default=1);
-# parser.add_argument("-n_epochs",type=int,default=100000);
+parser.add_argument("-n_epochs",type=int,default=100000);
 
 
 opt = parser.parse_args()
@@ -65,9 +65,9 @@ def newtonHypSearch(descType, n_epochs=5000):
 
 
 
-def expHypSearch(descType, n_epochs=100000):
+def expHypSearch(descType, n_epochs=opt.n_epochs):
 
-	for batch_size in [64]:
+	for batch_size in [32,64,-1][::opt.bw]:
 		try:
 			gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=0, fake=False,
 						 easyBin=False, projDim=opt.projDim, quickie=opt.quickie, descType=descType)
