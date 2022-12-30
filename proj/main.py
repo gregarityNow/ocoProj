@@ -15,7 +15,7 @@ parser.add_argument("-projDim",type=float,default=1);
 parser.add_argument("-purge",type=float,default=0);
 parser.add_argument("-bw",type=int,default=1);
 parser.add_argument("-batch_size",type=int,default=1);
-parser.add_argument("-n_epochs",type=int,default=100000);
+parser.add_argument("-n_epochs",type=int,default=-1);
 
 opt = parser.parse_args()
 
@@ -40,7 +40,7 @@ def main():
 	if "bandExp" in opt.descType:
 		expHypSearch("bandExp")
 
-def mainHypSearch(descType, n_epochs=5000):
+def mainHypSearch(descType, n_epochs=(5000 if opt.n_epochs == -1 else opt.n_epochs)):
 
 
 	for projDim in [1,10,100,-1]:
@@ -51,7 +51,7 @@ def mainHypSearch(descType, n_epochs=5000):
 			except:
 				print("oh bother",opt.batch_size, projDim, regLamb)
 
-def newtonHypSearch(descType, n_epochs=5000):
+def newtonHypSearch(descType, n_epochs=(5000 if opt.n_epochs == -1 else opt.n_epochs)):
 
 	# for batch_size in [64,32,-1][::opt.bw]:
 	for projDim in [1,10,100,-1]:
@@ -63,7 +63,7 @@ def newtonHypSearch(descType, n_epochs=5000):
 				pass
 
 
-def expHypSearch(descType, n_epochs=opt.n_epochs):
+def expHypSearch(descType, n_epochs=(100000 if opt.n_epochs == -1 else opt.n_epochs)):
 
 	for projDim in [1,10,100]:
 		try:

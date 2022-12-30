@@ -553,7 +553,6 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = 1,
             
             idx = idxEpoch[batch*batch_size:(batch+1)*batch_size]
             
-            
             batch_x = x_train[:,idx]
             batch_y = y_train[idx]
 
