@@ -467,8 +467,8 @@ def get_lr(descType, lrStrat, epoch, lr, d):
                 lr = np.sqrt(1/((1+epoch)*d))
             elif descType == "bandExp":
                 lr = np.sqrt(1/((1+epoch)*d))
-            elif epoch < 10:
-                lr = 1
+            # elif epoch < 10:
+            #     lr = 1
             elif descType == "gradDesc":
                 lr = 1/(epoch+1)
             elif descType == "mirrDesc":
