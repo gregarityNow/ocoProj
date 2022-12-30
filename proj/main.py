@@ -20,11 +20,7 @@ parser.add_argument("-raiseExc",type=int,default=0);
 parser.add_argument("-practice",type=int,default=0);
 parser.add_argument("-calcRegret",type=int,default=0);
 
-
 opt = parser.parse_args()
-
-
-
 
 def main():
 

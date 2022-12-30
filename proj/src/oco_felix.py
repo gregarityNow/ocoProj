@@ -18,6 +18,9 @@ import pathlib
 
 allResultsPath = "./resultsNew.pickle"
 indivResultsPath = "./indivResults"
+
+optimalWLoc = "./finalW.pickle"
+
 imgOutPath = "./img"
 import os
 import shutil
@@ -508,7 +511,8 @@ def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs 
     x_train, y_train, x_test, y_test = get_data(data, easyBin, False, fake)
 
     if u_optimal is None:
-        u_optimal = np.random.randn(x_train.shape[0])
+        with open(optimalWLoc,"rb") as fp:
+            u_optimal = pickle.load(fp);
     
     params = initParams(x_train, descType)
 
