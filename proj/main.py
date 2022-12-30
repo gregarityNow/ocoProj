@@ -13,7 +13,7 @@ parser.add_argument("-descType",type=str);
 parser.add_argument("-gamma",type=float,default=1/8);
 parser.add_argument("-projDim",type=float,default=1);
 parser.add_argument("-purge",type=float,default=0);
-parser.add_argument("-bw",type=float,default=1);
+parser.add_argument("-bw",type=int,default=1);
 
 
 opt = parser.parse_args()
@@ -49,9 +49,9 @@ def mainHypSearch(descType, n_epochs=500):
 				gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=regLamb, fake=False,
 								 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
 
-def newtonHypSearch(descType, n_epochs=10000):
+def newtonHypSearch(descType, n_epochs=5000):
 
-	for batch_size in [4,64,16,-1][::opt.bw]:
+	for batch_size in [64,32,-1][::opt.bw]:
 		for projDim in [1,10,100,-1]:
 			for regLamb in [0,0.2,1]:
 				try:
