@@ -555,46 +555,50 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
         epochAccsTest = []
         
         idxEpoch = np.random.permutation(np.arange(x_train.shape[1]))
-        
+
         lr = get_lr(descType, lrStrat, epoch, lr, d = x_train.shape[0])
 
         for batch in range(numBatches):
             
             idx = idxEpoch[batch*batch_size:(batch+1)*batch_size]
+            idxFullBatch = idxEpoch[:10]
             
             batch_x = x_train[:,idx]
             batch_y = y_train[idx]
+
+            offline_x = x_train[:, idxFullBatch]
+            offline_y = y_train[:, idxFullBatch]
 
             if batch_size == 1:
                 allIdx.append(idx[0])
 
             if descType == "gradDesc":
                 w, loss = gradDescStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = gradDescStep(x_train, y_train, paramsFullBatch, lr, regLamb, projDim)
+                wFullBatch, lossFullBatch = gradDescStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
         
             elif descType == "mirrDesc":
                 w, loss = mirrDescStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = mirrDescStep(x_train, y_train, paramsFullBatch, lr, regLamb, projDim)
+                wFullBatch, lossFullBatch = mirrDescStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
 
             elif descType == "expGrad":
                 w, loss = expGradStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = expGradStep(x_train, y_train, paramsFullBatch, lr, regLamb, projDim)
+                wFullBatch, lossFullBatch = expGradStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
 
             elif descType == "adaGrad":
                 w, loss = adaGradStep(batch_x, batch_y, params, regLamb, projDim)#no lr!
-                wFullBatch, lossFullBatch = adaGradStep(x_train, y_train, paramsFullBatch, regLamb, projDim)#no lr!
+                wFullBatch, lossFullBatch = adaGradStep(offline_x, offline_y, paramsFullBatch, regLamb, projDim)#no lr!
 
             elif descType == "newtonONS":
                 w, loss = newtonONSStep(batch_x, batch_y, params, regLamb, projDim, gamma)
-                wFullBatch, lossFullBatch = newtonONSStep(x_train, y_train, paramsFullBatch, regLamb, projDim, gamma)
+                wFullBatch, lossFullBatch = newtonONSStep(offline_x, offline_y, paramsFullBatch, regLamb, projDim, gamma)
 
             elif descType == "randExp":
                 w, loss = randExpStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = randExpStep(x_train, y_train, paramsFullBatch, lr, regLamb, projDim)
+                wFullBatch, lossFullBatch = randExpStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
 
             elif descType == "bandExp":
                 w, loss = bandExpStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = bandExpStep(x_train, y_train, paramsFullBatch, lr, regLamb, projDim)
+                wFullBatch, lossFullBatch = bandExpStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
 
             else:
                 raise Exception("Not implemented",descType)
