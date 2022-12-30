@@ -54,15 +54,21 @@ def newtonHypSearch(descType, n_epochs=10000):
 	for batch_size in [4,64,16,-1][::opt.bw]:
 		for projDim in [1,10,100,-1]:
 			for regLamb in [0,0.2,1]:
-				gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=regLamb, fake=False,
+				try:
+					gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=regLamb, fake=False,
 								 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType,gamma=opt.gamma)
+				except:
+					pass
 
 
 
 def expHypSearch(descType, n_epochs=100000):
 
 	for batch_size in [4,32,-1]:
-		gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=0, fake=False,
+		try:
+			gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=0, fake=False,
 						 easyBin=False, projDim=opt.projDim, quickie=opt.quickie, descType=descType)
+		except:
+			print("oh bother",batch_size, opt.projDim)
 
 main()
