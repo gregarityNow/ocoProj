@@ -63,7 +63,7 @@ def newtonHypSearch(descType, n_epochs=5000):
 
 
 
-def expHypSearch(descType, n_epochs=100000):
+def expHypSearch(descType, n_epochs=50000):
 
 	for batch_size in [32,64,-1][::opt.bw]:
 		try:
