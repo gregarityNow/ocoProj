@@ -637,7 +637,7 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
             lr *= 0.1
             print("learnedddd")
 
-        print("accuracy train",epoch,round(allAccsTrain[-1],3), "accuracy test",round(allAccsTest[-1],3),"loss train",round(allLosses[-1],5))
+        print("accuracy train",epoch,round(allAccsTrain[-1],3), "accuracy test",round(allAccsTest[-1],3),"loss train",round(allLosses[-1],5),"regret",epochRegret)
 
         if quickie > 0 and epoch >= quickie:
             break;
