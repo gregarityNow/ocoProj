@@ -32,7 +32,7 @@ def main():
 	if "adaGrad" in opt.descType:
 		mainHypSearch("adaGrad")
 	if "newtonONS" in opt.descType:
-		newtonONSStep("newtonONS")
+		newtonHypSearch("newtonONS")
 	if "randExp" in opt.descType:
 		expHypSearch("randExp")
 	if "bandExp" in opt.descType:
