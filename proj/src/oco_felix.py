@@ -100,7 +100,7 @@ def proj_l1_ball_weighted(y, d=1, D = None):
     D_invSorted = np.cumsum([d/D[i] for i in idx])
     inp_sorted = np.cumsum([yFabs[i] for i in idx])
     
-    dVals = [yFabs[i]-(inp_sorted[i]-1)*D_invSorted[i]]
+    dVals = [yFabs[i]-(inp_sorted[i]-1)*D_invSorted[i] for i in idx]
     d0 = np.argmax(dVals)
     theta0 = (inp_sorted[d0]-1)*D_invSorted[d0]
     
