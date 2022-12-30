@@ -604,7 +604,7 @@ def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs 
             uLosses.append(np.mean(uLoss));
             onlineLosses.append(np.mean(loss))
 
-            epochRegret = np.sum(onlineLosses) - np.sum(uLosses);
+            epochRegret = np.sum(np.maximum(np.array(onlineLosses) - np.array(uLosses),0));
             allRegrets.append(epochRegret)
 
             epochLoss = getLoss(x_train, y_train, w)
