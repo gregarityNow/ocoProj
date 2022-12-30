@@ -353,8 +353,8 @@ def randExpStep(batch_x, batch_y, params, lr, regLamb, projDim):
     
     w = projDim*(w_t[:dim]-w_t[dim:])
     
-    if np.random.rand()<0.01:
-        print("dubs",sorted(w)[:5],sorted(w)[-5:])
+    # if np.random.rand()<0.01:
+        # print("dubs",sorted(w)[:5],sorted(w)[-5:])
    
     
     params["w_t"] = w_t
