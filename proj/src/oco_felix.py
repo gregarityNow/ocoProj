@@ -607,7 +607,7 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
 
             allLossesFtWt.append(loss);
 
-            fullBatchLoss = getLoss(x_train[:,np.array(allIdx)], y_train[np.array(allIdx)], wFullBatch)
+            fullBatchLoss = np.sum(getLoss(x_train[:,np.array(allIdx)], y_train[np.array(allIdx)], wFullBatch))
             epochRegret = np.sum(allLossesFtWt) - fullBatchLoss
             allRegrets.append(epochRegret)
 
