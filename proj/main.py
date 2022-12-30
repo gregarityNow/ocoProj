@@ -4,7 +4,6 @@ try:
 except:
 	from src import *;
 
-import os
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -17,16 +16,11 @@ parser.add_argument("-purge",type=float,default=0);
 
 
 opt = parser.parse_args()
-import shutil
+
 
 def main():
 
-	if opt.purge:
-		print("purging!")
-		for path in [indivResultsPath, allResultsPath, imgOutPath]:
-			if os.path.exists(path):
-				print("purging",path)
-				shutil.rmtree(path)
+	setupFolders(opt.purge)
 
 
 	if "gradDesc" in opt.descType:

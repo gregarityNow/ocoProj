@@ -16,12 +16,23 @@ import warnings
 
 import pathlib
 
-pathlib.Path("./indivResults").mkdir(exist_ok=True,parents=True)
-pathlib.Path("./img").mkdir(exist_ok=True,parents=True)
-
 allResultsPath = "./results.pickle"
 indivResultsPath = "./indivResults"
 imgOutPath = "./img"
+import os
+import shutil
+
+def setupFolders(purge):
+
+    for path in [indivResultsPath, allResultsPath, imgOutPath]:
+        if purge and os.path.exists(path):
+            print("purging", path)
+            shutil.rmtree(path)
+
+        if not ".pickle" in path:
+            print("retouching",path);
+            pathlib.Path(path).mkdir(exist_ok=True, parents=True)
+
 
 
 import urllib.request
