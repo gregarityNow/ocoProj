@@ -31,10 +31,8 @@ def main():
 		mainHypSearch("expGrad")
 	if "adaGrad" in opt.descType:
 		mainHypSearch("adaGrad")
-	if "adaGrad" in opt.descType:
-		mainHypSearch("adaGrad")
-	if "newtonOns" in opt.descType:
-		newtonONSStep("newtonOns")
+	if "newtonONS" in opt.descType:
+		newtonONSStep("newtonONS")
 	if "randExp" in opt.descType:
 		expHypSearch("randExp")
 	if "bandExp" in opt.descType:
