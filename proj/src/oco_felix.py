@@ -16,7 +16,7 @@ import warnings
 
 import pathlib
 
-allResultsPath = "./resultsNew.pickle"
+allResultsPath = "./results_final.pickle"
 indivResultsPath = "./indivResults"
 
 optimalWLoc = "./finalW.pickle"
