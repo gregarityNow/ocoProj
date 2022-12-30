@@ -567,7 +567,7 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
             batch_y = y_train[idx]
 
             offline_x = x_train[:, idxFullBatch]
-            offline_y = y_train[:, idxFullBatch]
+            offline_y = y_train[idxFullBatch]
 
             if batch_size == 1:
                 allIdx.append(idx[0])
