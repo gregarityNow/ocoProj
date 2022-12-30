@@ -47,8 +47,11 @@ def mainHypSearch(descType, n_epochs=500):
 	for batch_size in [4,16,64,-1]:
 		for projDim in [1,10,100,-1]:
 			for regLamb in [0,0.2,1]:
-				gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=regLamb, fake=False,
+				try:
+					gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=regLamb, fake=False,
 								 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
+				except:
+					print("oh bother",batch_size, projDim, regLamb)
 
 def newtonHypSearch(descType, n_epochs=5000):
 
