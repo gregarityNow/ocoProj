@@ -16,6 +16,8 @@ parser.add_argument("-purge",type=float,default=0);
 parser.add_argument("-bw",type=int,default=1);
 parser.add_argument("-batch_size",type=int,default=1);
 parser.add_argument("-n_epochs",type=int,default=-1);
+parser.add_argument("-raiseExc",type=int,default=0);
+
 
 opt = parser.parse_args()
 
@@ -47,8 +49,10 @@ def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epo
 			try:
 				gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=regLamb, fake=False,
 							 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
-			except:
+			except Exception as e:
 				print("oh bother",opt.batch_size, projDim, regLamb)
+				if opt.raiseExc:
+					raise e
 
 def newtonHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
