@@ -666,8 +666,11 @@ def plot_results(d, title):
 
 
 def write(d):
-    with open(allResultsPath,"rb") as fp:
-        results = pickle.load(fp)
+    if os.path.exists(allResultsPath):
+        with open(allResultsPath,"rb") as fp:
+            results = pickle.load(fp)
+    else:
+        results = []
 
     results.append(d)
     with open(allResultsPath,"wb") as fp:
