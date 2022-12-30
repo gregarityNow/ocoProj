@@ -69,10 +69,10 @@ def newtonHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_e
 
 def expHypSearch(descType, n_epochs=(100000 if opt.n_epochs == -1 else opt.n_epochs)):
 
-	for projDim in [1,10,100][::opt.bw]:
+	for projDim in [1,10,100]:
 		try:
 			gradient_descent(data, opt, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=0, fake=False,
-						 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
+						 easyBin=False, projDim=opt.projDim, quickie=opt.quickie, descType=descType)
 		except:
 			print("oh bother",opt.batch_size, projDim)
 
