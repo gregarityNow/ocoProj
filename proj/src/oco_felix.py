@@ -614,7 +614,7 @@ def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs 
             epochAccsTrainSimple.append(accTrainSimple)
             epochAccsTestSimple.append(accTestSimple)
 
-            # break
+            break
 
         allLosses.append(np.mean(epochLosses))
         allAccsTrain.append(np.mean(epochAccsTrain))
