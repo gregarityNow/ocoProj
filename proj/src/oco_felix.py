@@ -16,7 +16,7 @@ import warnings
 
 import pathlib
 
-allResultsPath = "./results.pickle"
+allResultsPath = "./resultsNew.pickle"
 indivResultsPath = "./indivResults"
 imgOutPath = "./img"
 import os
@@ -561,7 +561,7 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
         for batch in range(numBatches):
             
             idx = idxEpoch[batch*batch_size:(batch+1)*batch_size]
-            idxFullBatch = idxEpoch[:500]
+            idxFullBatch = idxEpoch[:100]
             
             batch_x = x_train[:,idx]
             batch_y = y_train[idx]
