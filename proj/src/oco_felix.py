@@ -601,8 +601,8 @@ def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs 
             accuracyTest, accTestSimple = getAcc(predsTest, y_test)
 
             uLoss = getLoss(batch_x, batch_y, u_optimal)
-            uLosses.append(np.sum(uLoss));
-            onlineLosses.append(np.sum(loss))
+            uLosses.append(np.mean(uLoss));
+            onlineLosses.append(np.mean(loss))
 
             epochRegret = np.sum(onlineLosses) - np.sum(uLosses);
             allRegrets.append(epochRegret)
