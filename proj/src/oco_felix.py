@@ -206,9 +206,14 @@ def getAcc(preds, y):
 
     return accHarm, accSimple
 
+def getLoss(x_train, y_train, w):
+    modOut = (w @ x_train)
+    loss = np.maximum(1 - modOut * y_train, 0)
+    return loss
+
 def comp_grad_hinge(w, x_train, y_train, regLamb, d = -1):
-    modOut = (w@x_train)
-    loss = np.maximum(1-modOut*y_train,0)
+
+    loss = getLoss(x_train, y_train, w)
 
     if d == -1:
         grad_hinge_w = ((-1*x_train*y_train).T[loss > 0]).sum(axis=0)/len(y_train)
@@ -584,8 +589,8 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = 1,
             accuracyTrain, accTrainSimple = getAcc(predsTrain, y_train)
             accuracyTest, accTestSimple = getAcc(predsTest, y_test)
 
-            
-            epochLosses.append(np.sum(loss))
+            epochLoss = getLoss(x_train, y_train, w)
+            epochLosses.append(epochLoss)
             epochAccsTrain.append(accuracyTrain)
             epochAccsTest.append(accuracyTest)
 
@@ -595,8 +600,8 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = 1,
             if batch_size == 1:
                 # print("breaking early")
                 break
-            
-            
+
+
         allLosses.append(np.mean(epochLosses))
         allAccsTrain.append(np.mean(epochAccsTrain))
         allAccsTest.append(np.mean(epochAccsTest))
