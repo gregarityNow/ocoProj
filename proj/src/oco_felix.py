@@ -490,7 +490,7 @@ tqdm = partial(tqdm, position=0, leave=True)
 
 
 
-def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size = 1, regLamb = 1,fake = False,
+def gradient_descent(data, opt,u_optimal, lrStrat = "epochPro", n_epochs = 100, batch_size = 1, regLamb = 1,fake = False,
                      easyBin = False, projDim = -1, decInterval = 200, quickie = 0, descType ="gradDesc", gamma=1/8):
     '''
     :param data: dataframe containing train and test data
@@ -509,14 +509,14 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
     
     params = initParams(x_train, descType)
 
-    paramsFullBatch = initParams(x_train, descType)
-    
     allLosses = []
     allAccsTrain = []
     allAccsTrainSimple = []
     allAccsTestSimple = []
     allAccsTest = []
-    allLossesFtWt = []
+
+    uLosses = []
+    onlineLosses = []
     allRegrets = []
 
     
@@ -541,10 +541,6 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
     
     runtime = time.time()
 
-    allIdx = []
-
-
-
     for epoch in tqdm(range(n_epochs)):
 
 
@@ -566,39 +562,27 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
             batch_x = x_train[:,idx]
             batch_y = y_train[idx]
 
-            offline_x = x_train[:, idxFullBatch]
-            offline_y = y_train[idxFullBatch]
-
-            if batch_size == 1:
-                allIdx.append(idx[0])
 
             if descType == "gradDesc":
                 w, loss = gradDescStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = gradDescStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
         
             elif descType == "mirrDesc":
                 w, loss = mirrDescStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = mirrDescStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
 
             elif descType == "expGrad":
                 w, loss = expGradStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = expGradStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
 
             elif descType == "adaGrad":
                 w, loss = adaGradStep(batch_x, batch_y, params, regLamb, projDim)#no lr!
-                wFullBatch, lossFullBatch = adaGradStep(offline_x, offline_y, paramsFullBatch, regLamb, projDim)#no lr!
 
             elif descType == "newtonONS":
                 w, loss = newtonONSStep(batch_x, batch_y, params, regLamb, projDim, gamma)
-                wFullBatch, lossFullBatch = newtonONSStep(offline_x, offline_y, paramsFullBatch, regLamb, projDim, gamma)
 
             elif descType == "randExp":
                 w, loss = randExpStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = randExpStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
 
             elif descType == "bandExp":
                 w, loss = bandExpStep(batch_x, batch_y, params, lr, regLamb, projDim)
-                wFullBatch, lossFullBatch = bandExpStep(offline_x, offline_y, paramsFullBatch, lr, regLamb, projDim)
 
             else:
                 raise Exception("Not implemented",descType)
@@ -609,10 +593,11 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
             accuracyTrain, accTrainSimple = getAcc(predsTrain, y_train)
             accuracyTest, accTestSimple = getAcc(predsTest, y_test)
 
-            allLossesFtWt.append(loss);
+            uLoss = getLoss(batch_x, batch_y, u_optimal)
+            uLosses.append(np.sum(uLoss));
+            onlineLosses.append(np.sum(loss))
 
-            fullBatchLoss = np.sum(getLoss(x_train[:,np.array(allIdx)], y_train[np.array(allIdx)], wFullBatch))
-            epochRegret = np.sum(allLossesFtWt) - fullBatchLoss
+            epochRegret = np.sum(onlineLosses) - np.sum(uLosses);
             allRegrets.append(epochRegret)
 
             epochLoss = getLoss(x_train, y_train, w)
@@ -623,10 +608,7 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
             epochAccsTrainSimple.append(accTrainSimple)
             epochAccsTestSimple.append(accTestSimple)
 
-            if batch_size == 1:
-                # print("breaking early")
-                break
-
+            break
 
         allLosses.append(np.mean(epochLosses))
         allAccsTrain.append(np.mean(epochAccsTrain))
@@ -651,15 +633,17 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
         
     runtime = time.time()-runtime
 
-
     d["w_size"] = np.linalg.norm(w)
     d["runtime"] = runtime
-    d["loss"] = allLosses
+
     d["accTrain"] = allAccsTrain
     d["accTest"] = allAccsTest
     d["accTestSimple"] = allAccsTestSimple
     d["accTrainSimple"] = allAccsTrainSimple
     d["regret"] = allRegrets
+    d["uLosses"] = uLosses
+    d["wholeDSLosses"] = allLosses
+    d["finalW"] = w
 
     for col in ["accTrain","accTest","accTestSimple","accTrainSimple"]:
         d[col+"_final"] = d[col][-1]
@@ -686,7 +670,7 @@ def gradient_descent(data, opt, lrStrat = "epochPro", n_epochs = 100, batch_size
 
 def plot_results(d, title):
     allLosses, allAccsTrain, allAccsTrainSimple,\
-    allAccsTest, allAccsTestSimple = d["loss"], d["accTrain"],\
+    allAccsTest, allAccsTestSimple = d["wholeDSLosses"], d["accTrain"],\
                                      d["accTrainSimple"], d["accTest"], d["accTestSimple"]
 
     plt.figure()

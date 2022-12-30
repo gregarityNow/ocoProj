@@ -18,6 +18,7 @@ parser.add_argument("-batch_size",type=int,default=1);
 parser.add_argument("-n_epochs",type=int,default=-1);
 parser.add_argument("-raiseExc",type=int,default=0);
 parser.add_argument("-practice",type=int,default=0);
+parser.add_argument("-calcRegret",type=int,default=0);
 
 
 opt = parser.parse_args()
