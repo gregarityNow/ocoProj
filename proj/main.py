@@ -48,7 +48,7 @@ def main():
 
 def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
-	for projDim in [1,10,100,-1][::opt.bw]:
+	for projDim in [1,10,-1,100][::opt.bw]:
 		for regLamb in [0,0.2,1]:
 			try:
 				gradient_descent(data, opt, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=regLamb, fake=False,
