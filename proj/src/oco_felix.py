@@ -490,7 +490,7 @@ tqdm = partial(tqdm, position=0, leave=True)
 
 
 
-def gradient_descent(data, opt,u_optimal, lrStrat = "epochPro", n_epochs = 100, batch_size = 1, regLamb = 1,fake = False,
+def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs = 100, batch_size = 1, regLamb = 1,fake = False,
                      easyBin = False, projDim = -1, decInterval = 200, quickie = 0, descType ="gradDesc", gamma=1/8):
     '''
     :param data: dataframe containing train and test data
@@ -506,6 +506,9 @@ def gradient_descent(data, opt,u_optimal, lrStrat = "epochPro", n_epochs = 100, 
     '''
 
     x_train, y_train, x_test, y_test = get_data(data, easyBin, False, fake)
+
+    if u_optimal is None:
+        u_optimal = np.random.randn(x_train.shape[0])
     
     params = initParams(x_train, descType)
 

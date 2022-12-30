@@ -24,6 +24,8 @@ parser.add_argument("-calcRegret",type=int,default=0);
 opt = parser.parse_args()
 
 
+
+
 def main():
 
 	setupFolders(opt.purge)
