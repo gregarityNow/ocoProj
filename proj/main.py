@@ -4,7 +4,7 @@ try:
 except:
 	from src import *;
 
-
+import os
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -23,9 +23,11 @@ def main():
 
 	if opt.purge:
 		print("purging!")
-		shutil.rmtree(indivResultsPath)
-		shutil.rmtree(allResultsPath)
-		shutil.rmtree(imgOutPath)
+		for path in [indivResultsPath, allResultsPath, imgOutPath]:
+			if os.path.exists(path):
+				print("purging",path)
+				shutil.rmtree(path)
+
 
 	if "gradDesc" in opt.descType:
 		mainHypSearch("gradDesc")

@@ -20,7 +20,7 @@ pathlib.Path("./indivResults").mkdir(exist_ok=True,parents=True)
 pathlib.Path("./img").mkdir(exist_ok=True,parents=True)
 
 allResultsPath = "./results.pickle"
-indivResultsPath = "./results"
+indivResultsPath = "./indivResults"
 imgOutPath = "./img"
 
 
