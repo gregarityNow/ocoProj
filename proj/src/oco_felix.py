@@ -472,9 +472,9 @@ def get_lr(descType, lrStrat, epoch, lr, d):
     if descType not in ["adaGrad"]:
         if lrStrat == "epochPro":
             if descType == "randExp":
-                lr = np.sqrt(1/((1+epoch)*d))
+                lr = np.sqrt(1/((1+epoch/100)*d))
             elif descType == "bandExp":
-                lr = np.sqrt(1/((1+epoch)*d))
+                lr = np.sqrt(1/((1+epoch/100)*d))
             # elif epoch < 10:
             #     lr = 1
             elif descType == "gradDesc":
