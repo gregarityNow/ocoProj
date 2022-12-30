@@ -42,7 +42,6 @@ def main():
 
 def mainHypSearch(descType, n_epochs=(5000 if opt.n_epochs == -1 else opt.n_epochs)):
 
-
 	for projDim in [1,10,100,-1]:
 		for regLamb in [0,0.2,1]:
 			try:
