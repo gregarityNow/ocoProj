@@ -17,7 +17,6 @@ parser.add_argument("-bw",type=int,default=1);
 parser.add_argument("-batch_size",type=int,default=1);
 parser.add_argument("-n_epochs",type=int,default=100000);
 
-
 opt = parser.parse_args()
 
 
@@ -41,7 +40,7 @@ def main():
 	if "bandExp" in opt.descType:
 		expHypSearch("bandExp")
 
-def mainHypSearch(descType, n_epochs=500):
+def mainHypSearch(descType, n_epochs=5000):
 
 
 	for projDim in [1,10,100,-1]:
@@ -54,24 +53,23 @@ def mainHypSearch(descType, n_epochs=500):
 
 def newtonHypSearch(descType, n_epochs=5000):
 
-	for batch_size in [64,32,-1][::opt.bw]:
-		for projDim in [1,10,100,-1]:
-			for regLamb in [0,0.2,1]:
-				try:
-					gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=regLamb, fake=False,
-								 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType,gamma=opt.gamma)
-				except:
-					pass
-
+	# for batch_size in [64,32,-1][::opt.bw]:
+	for projDim in [1,10,100,-1]:
+		for regLamb in [0,0.2,1]:
+			try:
+				gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=regLamb, fake=False,
+							 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType,gamma=opt.gamma)
+			except:
+				pass
 
 
 def expHypSearch(descType, n_epochs=opt.n_epochs):
 
-	for batch_size in [32,64,-1][::opt.bw]:
+	for projDim in [1,10,100]:
 		try:
-			gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=batch_size, regLamb=0, fake=False,
-						 easyBin=False, projDim=opt.projDim, quickie=opt.quickie, descType=descType)
+			gradient_descent(data, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=0, fake=False,
+						 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
 		except:
-			print("oh bother",batch_size, opt.projDim)
+			print("oh bother",opt.batch_size, projDim)
 
 main()

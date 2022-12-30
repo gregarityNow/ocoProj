@@ -593,7 +593,7 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = 1,
             epochAccsTestSimple.append(accTestSimple)
 
             if batch_size == 1:
-                print("breaking early")
+                # print("breaking early")
                 break
             
             
