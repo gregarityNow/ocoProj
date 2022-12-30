@@ -624,6 +624,9 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
     d["accTestSimple"] = allAccsTestSimple
     d["accTrainSimple"] = allAccsTrainSimple
 
+    for col in ["accTrain","accTest","accTestSimple","accTrainSimple"]:
+        d[col+"_final"] = d[col][-1]
+
     title = ""
     if batch_size > 0:
         title += "Stochastic (" + str(batch_size) + ") "
@@ -633,6 +636,9 @@ def gradient_descent(data, lrStrat = "epochPro", n_epochs = 100, batch_size = -1
         title += "with projection (" + str(projDim)+")"
     else:
         title += "without projection"
+
+    outPath = d["descType"]+"_"+str(d["projDim"])+"_"+str(d["projDim"])+"_"+str(time.time())+".png"
+    d["outPath"] = outPath
     plot_results(d, title)
     write(d)
     
@@ -662,7 +668,7 @@ def plot_results(d, title):
     ax.legend(lns, labs,loc="lower right")
     plt.title(title)
 
-    plt.savefig(imgOutPath + "/"+d["descType"]+"_"+str(d["projDim"])+"_"+str(d["projDim"])+"_"+str(time.time())+".png");
+    plt.savefig(imgOutPath + "/"+d["outPath"]);
 
 
 def write(d):
@@ -679,4 +685,3 @@ def write(d):
     path = str(time.time())
     with open(indivResultsPath + "/" +path, "wb") as fp:
         pickle.dump(d,fp);
-
