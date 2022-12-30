@@ -709,3 +709,5 @@ def write(d):
     path = str(time.time())
     with open(indivResultsPath + "/" +path, "wb") as fp:
         pickle.dump(d,fp);
+
+    print("wrote to",allResultsPath,indivResultsPath)
