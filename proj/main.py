@@ -46,7 +46,7 @@ def main():
 
 def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
-	for batch_size in [-1]:
+	for batch_size in [1]:
 		for projDim in [1,10,-1,100][::opt.bw]:
 			for regLamb in [0,0.5]:
 				try:
