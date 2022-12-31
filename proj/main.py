@@ -54,7 +54,7 @@ def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epo
 					results, succ = get_results()
 				seen = False
 				for r in results:
-					if r["descType"] == descType and r["batch_size"] == batch_size and r["projDim"] == projDim and r["regLamb"] == regLamb:
+					if r["descType"] == descType and r["batch_size"] == (batch_size if batch_size > 0 else 60000) and r["projDim"] == projDim and r["regLamb"] == regLamb:
 						seen = True
 						break
 				if seen:
