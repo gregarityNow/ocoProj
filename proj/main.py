@@ -33,7 +33,7 @@ def main():
 		mainHypSearch("gradDesc")
 	if "mirrDesc" in opt.descType:
 		mainHypSearch("mirrDesc")
-	if "expGrad" in opt.descType:
+	if "expGrad" in opt.dnescType:
 		mainHypSearch("expGrad")
 	if "adaGrad" in opt.descType:
 		mainHypSearch("adaGrad")
@@ -43,6 +43,21 @@ def main():
 		expHypSearch("randExp")
 	if "bandExp" in opt.descType:
 		expHypSearch("bandExp")
+
+def alreadySeen(results, criteria):
+	seen = 0
+	for r in results:
+		match = True
+		for crit in criteria:
+			val = crit[1]
+			if crit[0] == "batch_size" and val == -1: val = 60000
+			if r[crit[0]] != val:
+				match = False
+				break
+		if match:
+			seen += 1
+
+	return seen
 
 def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
@@ -54,16 +69,8 @@ def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epo
 		for projDim in [1,10,-1,100][::opt.bw]:
 			for regLamb in [0,0.5]:
 
-				seen = 0
-				for r in results:
-					if r["descType"] == descType and r["batch_size"] == (batch_size if batch_size > 0 else 60000) and r["projDim"] == projDim and r["regLamb"] == regLamb:
-						seen += 1
-
-				if seen:
-					print("seen",seen, descType, batch_size, projDim, regLamb)
-					continue
-				else:
-					print("not seen",descType, batch_size, projDim, regLamb)
+				if alreadySeen(results, ("descType",descType),("batch_size",batch_size),("projDim",projDim),("regLamb",regLamb)):
+					continue;
 
 				try:
 					gradient_descent(data, opt, lrStrat="epochPro", n_epochs=(n_epochs if batch_size != -1 else int(n_epochs/10)), batch_size=batch_size, regLamb=regLamb, fake=False,
@@ -75,9 +82,13 @@ def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epo
 
 def newtonHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
-	# for batch_size in [64,32,-1][::opt.bw]:
+	results, succ = get_results()
 	for projDim in [1,10,100,-1][::opt.bw]:
 		for regLamb in [0,0.2,1]:
+
+			if alreadySeen(results, ("descType", descType),("projDim", projDim), ("regLamb", regLamb)):
+				continue;
+
 			try:
 				gradient_descent(data, opt, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=regLamb, fake=False,
 							 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType,gamma=opt.gamma)
@@ -87,10 +98,13 @@ def newtonHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_e
 
 def expHypSearch(descType, n_epochs=(100000 if opt.n_epochs == -1 else opt.n_epochs)):
 
-	for projDim in [1,10,100]:
+	results, succ = get_results()
+	for projDim in [1,10,100,500]:
+		if alreadySeen(results, ("descType", descType), ("projDim", projDim)):
+			continue;
 		try:
 			gradient_descent(data, opt, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=0, fake=False,
-						 easyBin=False, projDim=opt.projDim, quickie=opt.quickie, descType=descType)
+						 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
 		except:
 			print("oh bother",opt.batch_size, projDim)
 
