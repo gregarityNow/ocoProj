@@ -847,6 +847,7 @@ def write(d):
             print("written, finally")
             break
         except:
+            print("eup, fumble")
             continue;
 
 
