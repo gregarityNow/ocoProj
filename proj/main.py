@@ -45,6 +45,7 @@ def main():
 		expHypSearch("bandExp")
 
 def alreadySeen(results, criteria):
+	return 0
 	seen = 0
 	for r in results:
 		match = True
