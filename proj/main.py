@@ -106,7 +106,7 @@ def newtonHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_e
 def expHypSearch(descType, n_epochs=(100000 if opt.n_epochs == -1 else opt.n_epochs)):
 
 	results, succ = get_results()
-	for projDim in [1,10,100,500]:
+	for projDim in [1,10,100,500][::opt.bw]:
 		crits = (("descType", descType), ("projDim", projDim))
 		if alreadySeen(results, crits):
 			print("already seen",crits)
