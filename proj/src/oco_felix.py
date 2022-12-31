@@ -846,8 +846,9 @@ def write(d):
                 pickle.dump(results, fp);
             print("written, finally")
             break
-        except:
-            print("eup, fumble")
+        except Exception as e:
+            print("eup, fumble", e)
+            time.sleep(np.random.rand()*20)
             continue;
 
 
