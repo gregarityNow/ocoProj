@@ -107,7 +107,7 @@ def expHypSearch(descType, n_epochs=(100000 if opt.n_epochs == -1 else opt.n_epo
 
 	results, succ = get_results()
 	for projDim in [1,10,100,500][::opt.bw]:
-		crits = (("descType", descType), ("projDim", projDim))
+		crits = (("descType", descType), ("projDim", projDim),("batch_size",opt.batch_size))
 		if alreadySeen(results, crits):
 			print("already seen",crits)
 			continue;
