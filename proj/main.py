@@ -67,7 +67,7 @@ def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epo
 		results, succ = get_results()
 
 	for batch_size in [1, -1]:
-		for projDim in [1,10,-1,100][::opt.bw]:
+		for projDim in [10,-1,1,100][::opt.bw]:
 			for regLamb in [0,0.5]:
 
 				crits = (("descType",descType),("batch_size",batch_size),("projDim",projDim),("regLamb",regLamb))
