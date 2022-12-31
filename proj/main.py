@@ -73,6 +73,8 @@ def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epo
 				if alreadySeen(results, crits):
 					print("already seen",crits)
 					continue;
+				else:
+					print("not seen yet!", crits)
 
 				try:
 					gradient_descent(data, opt, lrStrat="epochPro", n_epochs=(n_epochs if batch_size != -1 else int(n_epochs/10)), batch_size=batch_size, regLamb=regLamb, fake=False,
