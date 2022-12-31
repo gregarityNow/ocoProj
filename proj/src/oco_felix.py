@@ -840,7 +840,10 @@ def write(d):
 
     while True:
         try:
-            results = get_results()
+            results, success = get_results()
+            if not success:
+                time.sleep(4.23 + np.random.rand()*2)
+                continue;
             results.append(d)
             with open(allResultsPath,"wb") as fp:
                 pickle.dump(results, fp);
