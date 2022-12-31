@@ -817,13 +817,21 @@ def plot_results(d, title):
 
     plt.savefig(imgOutPath + "/"+d["outPath"]);
 
+def get_results():
+    try:
+        if os.path.exists(allResultsPath):
+            with open(allResultsPath,"rb") as fp:
+                results = pickle.load(fp)
+        else:
+            results = []
+        return results, True
+    except:
+        return None, False
 
 def write(d):
-    if os.path.exists(allResultsPath):
-        with open(allResultsPath,"rb") as fp:
-            results = pickle.load(fp)
-    else:
-        results = []
+
+
+    results = get_results()
 
     results.append(d)
     with open(allResultsPath,"wb") as fp:

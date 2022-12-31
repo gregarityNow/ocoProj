@@ -46,9 +46,24 @@ def main():
 
 def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
-	for batch_size in [-1]:
+	for batch_size in [1, -1]:
 		for projDim in [1,10,-1,100][::opt.bw]:
 			for regLamb in [0,0.5]:
+				results, succ = get_results()
+				while not succ:
+					results, succ = get_results()
+				seen = False
+				for r in results:
+					if r["descType"] == descType and r["batch_size"] == batch_size and r["projDim"] == projDim and d["regLamb"] == regLamb:
+						seen = True
+						break
+				if seen:
+					print("seen", batch_size, projDim, regLamb)
+					continue
+				else:
+					print("not seen",batch_size, projDim, regLamb)
+					continue;
+
 				try:
 					gradient_descent(data, opt, lrStrat="epochPro", n_epochs=(n_epochs if batch_size != -1 else int(n_epochs/10)), batch_size=batch_size, regLamb=regLamb, fake=False,
 								 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
