@@ -831,14 +831,24 @@ def get_results():
 def write(d):
 
 
-    results = get_results()
 
-    results.append(d)
-    with open(allResultsPath,"wb") as fp:
-        pickle.dump(results, fp);
 
     path = str(time.time())
-    with open(indivResultsPath + "/" +path, "wb") as fp:
-        pickle.dump(d,fp);
+    with open(indivResultsPath + "/" + path, "wb") as fp:
+        pickle.dump(d, fp);
+
+
+    while True:
+        try:
+            results = get_results()
+            results.append(d)
+            with open(allResultsPath,"wb") as fp:
+                pickle.dump(results, fp);
+            print("written, finally")
+            break
+        except:
+            continue;
+
+
 
     print("wrote to",allResultsPath,indivResultsPath)
