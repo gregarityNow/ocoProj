@@ -33,7 +33,7 @@ def main():
 		mainHypSearch("gradDesc")
 	if "mirrDesc" in opt.descType:
 		mainHypSearch("mirrDesc")
-	if "expGrad" in opt.dnescType:
+	if "expGrad" in opt.descType:
 		mainHypSearch("expGrad")
 	if "adaGrad" in opt.descType:
 		mainHypSearch("adaGrad")
