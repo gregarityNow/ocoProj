@@ -52,6 +52,8 @@ def prepData(dataLoc = "/tmp/f002nb9/oco/mnist.pickle"):
     :param dataLoc:
     :return:
     '''
+    if not os.path.exists(dataLoc):
+        raise Exception(dataLoc + "does not exist! You must specify it on the command line when executing this file!")
     try:
         #https://pjreddie.com/media/files/mnist_train.csv
         with open(dataLoc,"rb") as fp:
