@@ -7,11 +7,13 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+
 import pickle
 import warnings
 # warnings.filterwarnings('ignore')
 # get_ipython().run_line_magic('matplotlib', 'inline')
+
+from .vis import *;
 
 import pathlib
 
@@ -20,7 +22,7 @@ indivResultsPath = "./indivResults"
 
 optimalWLoc = "./finalW.pickle"
 
-imgOutPath = "./img"
+
 import os
 import shutil
 
@@ -794,28 +796,6 @@ def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs 
 
 
 
-def plot_results(d, title):
-    allLosses, allAccsTrain, allAccsTrainSimple,\
-    allAccsTest, allAccsTestSimple = d["wholeDSLosses"], d["accTrain"],\
-                                     d["accTrainSimple"], d["accTest"], d["accTestSimple"]
-
-    plt.figure()
-    ax = plt.gca()
-    ls = plt.plot(allLosses,label="loss")
-
-    twinx = ax.twinx()
-    tr = twinx.plot(allAccsTrainSimple,color="green",label="weighted train accuracy",linestyle='dashed')
-    trh = twinx.plot(allAccsTrain,label="harmonic train accuracy",color="green")
-    
-    ts = twinx.plot(allAccsTestSimple,color="red",label="weighted test accuracy",linestyle='dashed')
-    tsh = twinx.plot(allAccsTest,label="harmonic test accuracy",color="red",)
-
-    lns = ls + trh + tr + tsh + ts
-    labs = [l.get_label() for l in lns]
-    ax.legend(lns, labs,loc="lower right")
-    plt.title(title)
-
-    plt.savefig(imgOutPath + "/"+d["outPath"]);
 
 def get_results():
     try:
