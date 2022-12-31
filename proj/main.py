@@ -93,6 +93,7 @@ def newtonHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_e
 			crits = (("descType", descType),("projDim", projDim), ("regLamb", regLamb))
 			if alreadySeen(results, crits):
 				print("already seen", crits)
+				continue;
 			else:
 				print("not seen yet!", crits)
 
