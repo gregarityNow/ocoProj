@@ -110,6 +110,9 @@ def expHypSearch(descType, n_epochs=(100000 if opt.n_epochs == -1 else opt.n_epo
 		if alreadySeen(results, crits):
 			print("already seen",crits)
 			continue;
+		else:
+			print("not seen yet!", crits)
+
 		try:
 			gradient_descent(data, opt, lrStrat="epochPro", n_epochs=n_epochs, batch_size=opt.batch_size, regLamb=0, fake=False,
 						 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
