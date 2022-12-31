@@ -18,8 +18,11 @@ parser.add_argument("-batch_size",type=int,default=1);
 parser.add_argument("-n_epochs",type=int,default=-1);
 parser.add_argument("-raiseExc",type=int,default=0);
 parser.add_argument("-practice",type=int,default=0);
+parser.add_argument("-dataLoc",type=str,default="/tmp/f002nb9/oco/mnist.pickle")
 
 opt = parser.parse_args()
+
+data = prepData(opt.dataLoc)
 
 def main():
 
@@ -43,11 +46,11 @@ def main():
 
 def mainHypSearch(descType, n_epochs=(10000 if opt.n_epochs == -1 else opt.n_epochs)):
 
-	for batch_size in [1,-1]:
+	for batch_size in [-1]:
 		for projDim in [1,10,-1,100][::opt.bw]:
 			for regLamb in [0,0.5]:
 				try:
-					gradient_descent(data, opt, lrStrat="epochPro", n_epochs=(n_epochs if batch_size != -1 else n_epochs/10), batch_size=batch_size, regLamb=regLamb, fake=False,
+					gradient_descent(data, opt, lrStrat="epochPro", n_epochs=(n_epochs if batch_size != -1 else int(n_epochs/10)), batch_size=batch_size, regLamb=regLamb, fake=False,
 								 easyBin=False, projDim=projDim, quickie=opt.quickie, descType=descType)
 				except Exception as e:
 					print("oh bother",opt.batch_size, projDim, regLamb)

@@ -8,7 +8,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 import pickle
 import warnings
 # warnings.filterwarnings('ignore')
@@ -43,27 +42,35 @@ def setupFolders(purge):
 import urllib.request
 import json
 
-dataLoc = "/tmp/f002nb9/oco/mnist.pickle"
-try:
-    #https://pjreddie.com/media/files/mnist_train.csv
-    with open(dataLoc,"rb") as fp:
-        data = pickle.load(fp)
-except Exception as ex:
-    print("no mnist.pickle",ex)
-    pathlib.Path(dataLoc[:dataLoc.index("mnist.pickle")]).mkdir(parents=True,exist_ok=True)
-    data = {}
-    for name in ["test","train"]:
-        with urllib.request.urlopen('https://pjreddie.com/media/files/mnist_'+name+'.csv') as link:
-            lines = link.read().decode('utf-8').split("\n")
-            rows = [{"label":int(row[0]),"vec":np.array(json.loads("["+row[2:]+"]"))} for row in lines[:-1]]
-            df = pd.DataFrame(rows)
-            data[name] = df
-    for df in data.values():
-        df["b_label"] = df.label.apply(lambda x: 2*int((x == 0))-1)
-        df["vecNorm"] = df.vec.apply(lambda vec: np.concatenate([vec/255,[1]]))
-    with open(dataLoc,"wb") as fp:
-        pickle.dump(data, fp)
-    print("dumped to",dataLoc)
+
+def prepData(dataLoc = "/tmp/f002nb9/oco/mnist.pickle"):
+    '''
+    Task 1.2: create dataframe with -1, 1 label for non-zero, zero respectively,
+    as well as map each pixel to [0,1]
+    :param dataLoc:
+    :return:
+    '''
+    try:
+        #https://pjreddie.com/media/files/mnist_train.csv
+        with open(dataLoc,"rb") as fp:
+            data = pickle.load(fp)
+    except Exception as ex:
+        print("no mnist.pickle",ex)
+        pathlib.Path(dataLoc[:dataLoc.index("mnist.pickle")]).mkdir(parents=True,exist_ok=True)
+        data = {}
+        for name in ["test","train"]:
+            with urllib.request.urlopen('https://pjreddie.com/media/files/mnist_'+name+'.csv') as link:
+                lines = link.read().decode('utf-8').split("\n")
+                rows = [{"label":int(row[0]),"vec":np.array(json.loads("["+row[2:]+"]"))} for row in lines[:-1]]
+                df = pd.DataFrame(rows)
+                data[name] = df
+        for df in data.values():
+            df["b_label"] = df.label.apply(lambda x: 2*int((x == 0))-1)
+            df["vecNorm"] = df.vec.apply(lambda vec: np.concatenate([vec/255,[1]]))
+        with open(dataLoc,"wb") as fp:
+            pickle.dump(data, fp)
+        print("dumped to",dataLoc)
+    return data
 
 
 def show(row):
@@ -94,6 +101,13 @@ def get_toy_data(n=1000):
 
 
 def proj_l1_ball_weighted(y, d=1, D = None):
+    '''
+    Weighted version of the l1 projection. Based on algorithm 17 in lecture notes
+    :param y:
+    :param d:
+    :param D:
+    :return:
+    '''
     if np.sum(D*y) <= d:
         return y
 
@@ -114,6 +128,8 @@ def proj_l1_ball_weighted(y, d=1, D = None):
 
 def proj_l1_ball(y, d=1):
     '''
+    Based on https://home.ttic.edu/~wwang5/papers/SimplexProj.pdf
+
     Intuition:
     excess = 1/j(1-∑ui) is the excess that has to be distributed over j coordinates
     if coordinate uj is so small compared to the excess that uj-excess is less than 0,
@@ -125,7 +141,6 @@ def proj_l1_ball(y, d=1):
     yFabs = np.fabs(y)
     
     y_sorted = np.sort(yFabs)[::-1]
-    # print("snort",y_sorted)
 
     num = (d-np.cumsum(y_sorted))
     denom = np.arange(len(y_sorted))+1
@@ -145,17 +160,15 @@ def proj_l1_ball(y, d=1):
 
 
 
-def gradreg(w, x, y, lmbda):
-    #w, x, y
-    threshold =y * (x @ w)
-    b = np.expand_dims(y, -1)
-    gradient = -y * x
-    gradient[threshold >= 1] = 0
-
-    return gradient.mean(axis=0)+lmbda*w
-
-
 def get_data(data, easyBin, quickie, fake):
+    '''
+    Transforms dataframes into np arrays for training
+    :param data:
+    :param easyBin:
+    :param quickie:
+    :param fake:
+    :return:
+    '''
     x_train = np.vstack(data["train"].vecNorm).T
     x_test = np.vstack(data["test"].vecNorm).T
     
@@ -197,6 +210,13 @@ def get_data(data, easyBin, quickie, fake):
 
 classes = [-1,1]
 def getAcc(preds, y):
+    '''
+    Computes both the weighted and simple accuracies
+
+    :param preds:
+    :param y:
+    :return:
+    '''
     acc = 0
 
     for c in classes:
@@ -210,11 +230,27 @@ def getAcc(preds, y):
     return accHarm, accSimple
 
 def getLoss(x_train, y_train, w):
+    '''
+    Computes the hinge loss given data x, y, and a hyperplane w
+    :param x_train:
+    :param y_train:
+    :param w:
+    :return:
+    '''
     modOut = (w @ x_train)
     loss = np.maximum(1 - modOut * y_train, 0)
     return loss
 
 def comp_grad_hinge(w, x_train, y_train, regLamb, d = -1):
+    '''
+    Computes the gradient with respect to the hinge loss (optionally only at coordinate d if specified)
+    :param w:
+    :param x_train:
+    :param y_train:
+    :param regLamb:
+    :param d:
+    :return:
+    '''
 
     loss = getLoss(x_train, y_train, w)
 
@@ -227,7 +263,15 @@ def comp_grad_hinge(w, x_train, y_train, regLamb, d = -1):
     return grad_hinge_w, loss
 
 
-def initParams(x_train, descType, gamma = 1/8, projDim = 100):
+def initParams(x_train, descType, gamma = 1/8):
+    '''
+    Initialize individual parameters for each convex optimization algorithm.
+
+    :param x_train:
+    :param descType:
+    :param gamma:
+    :return:
+    '''
     params = {}
     if descType == "gradDesc":
         w = np.random.randn(x_train.shape[0])
@@ -280,11 +324,8 @@ def initParams(x_train, descType, gamma = 1/8, projDim = 100):
         
         w_inter_plus = np.ones(x_train.shape[0])/(x_train.shape[0])
         params["w_inter_plus"] = w_inter_plus
-        
-        print("musarak",np.linalg.norm(params["w_inter_plus"]),np.linalg.norm(params["w_inter_minus"]))
-        
+
         w = np.zeros(x_train.shape[0])
-#         w /= np.sum(w)
         params["w"] = w
     
     elif descType == "bandExp":
@@ -303,14 +344,22 @@ def initParams(x_train, descType, gamma = 1/8, projDim = 100):
 
 
 def bandExpStep(batch_x, batch_y, params, lr, regLamb, projDim):
+    '''
+    Task 6.1, implements Stochastic Bandit Exponentiated Gradient +/-
+    :param batch_x:
+    :param batch_y:
+    :param params:
+    :param lr:
+    :param regLamb:
+    :param projDim:
+    :return:
+    '''
     
     w_x = params["w_x"]
     
     probDist = params["probDist"]
     w_tPrime = params["w_tPrime"]
-    
-#     print("dubs",sorted(w_x)[:5],sorted(w_x)[-5:],sorted(w_tPrime)[:5],sorted(w_tPrime)[-5:])
-    
+
     dim = batch_x.shape[0]
     gamma = min(1, lr*dim)
     
@@ -342,6 +391,16 @@ def bandExpStep(batch_x, batch_y, params, lr, regLamb, projDim):
 
 
 def randExpStep(batch_x, batch_y, params, lr, regLamb, projDim):
+    '''
+    Task 6.1, implements Stochastic Randomized Exponentiated Gradient +/-
+    :param batch_x:
+    :param batch_y:
+    :param params:
+    :param lr:
+    :param regLamb:
+    :param projDim:
+    :return:
+    '''
     
     dim = batch_x.shape[0]
     randCoord = np.random.randint(dim)
@@ -363,8 +422,8 @@ def randExpStep(batch_x, batch_y, params, lr, regLamb, projDim):
     
     # if np.random.rand()<0.01:
         # print("dubs",sorted(w)[:5],sorted(w)[-5:])
-   
-    
+
+
     params["w_t"] = w_t
     params["w"] = w
 
@@ -373,6 +432,16 @@ def randExpStep(batch_x, batch_y, params, lr, regLamb, projDim):
 
 
 def expGradStep(batch_x, batch_y, params, lr, regLamb, projDim):
+    '''
+    Task 4.2, implement Stochastic Exponentiated Gradient +/-
+    :param batch_x:
+    :param batch_y:
+    :param params:
+    :param lr:
+    :param regLamb:
+    :param projDim:
+    :return:
+    '''
     grad_hinge_w, loss = comp_grad_hinge(params["w"], batch_x, batch_y, regLamb)
 
     thetaPlus = params["thetaPlus"] + grad_hinge_w * lr
@@ -395,6 +464,17 @@ def expGradStep(batch_x, batch_y, params, lr, regLamb, projDim):
     return w, loss
 
 def gradDescStep(batch_x, batch_y, params, lr, regLamb, projDim):
+    '''
+    Task 2.1, implements the gradient descent step
+
+    :param batch_x:
+    :param batch_y:
+    :param params:
+    :param lr:
+    :param regLamb:
+    :param projDim:
+    :return:
+    '''
     
     grad_hinge_w, loss = comp_grad_hinge(params["w"], batch_x, batch_y, regLamb)
 
@@ -409,6 +489,16 @@ def gradDescStep(batch_x, batch_y, params, lr, regLamb, projDim):
     return w, loss
 
 def mirrDescStep(batch_x, batch_y, params, lr, regLamb, projDim):
+    '''
+    Task 4.1, implement Stochastic Mirror Descent
+    :param batch_x:
+    :param batch_y:
+    :param params:
+    :param lr:
+    :param regLamb:
+    :param projDim:
+    :return:
+    '''
     
     grad_hinge_w, loss = comp_grad_hinge(params["w"], batch_x, batch_y, regLamb)
 
@@ -421,6 +511,15 @@ def mirrDescStep(batch_x, batch_y, params, lr, regLamb, projDim):
     return w, loss
 
 def adaGradStep(batch_x, batch_y, params, regLamb, projDim):
+    '''
+    Task 4.3, implement Stochastic AdaGrad
+    :param batch_x:
+    :param batch_y:
+    :param params:
+    :param regLamb:
+    :param projDim:
+    :return:
+    '''
     
     grad_hinge_w, loss = comp_grad_hinge(params["w"], batch_x, batch_y, regLamb)
     
@@ -430,8 +529,6 @@ def adaGradStep(batch_x, batch_y, params, regLamb, projDim):
 
     y = params["w"] - grad_hinge_w/D
     
-
-#    w = proj_l1_ball(y,d=projDim)
     w = proj_l1_ball_weighted(y, D = D, d = projDim)
     params["w"] = w
     params["S"] = S
@@ -439,7 +536,16 @@ def adaGradStep(batch_x, batch_y, params, regLamb, projDim):
     return w, loss
 
 def newtonONSStep(batch_x, batch_y, params, regLamb, projDim, gamma):
-    #ons lol
+    '''
+    Task 5.1, Implement the Stochastic Online Newton Step.
+    :param batch_x:
+    :param batch_y:
+    :param params:
+    :param regLamb:
+    :param projDim:
+    :param gamma:
+    :return:
+    '''
     
     grad_hinge_w, loss = comp_grad_hinge(params["w"], batch_x, batch_y, regLamb)
     
@@ -469,6 +575,16 @@ def newtonONSStep(batch_x, batch_y, params, regLamb, projDim, gamma):
 
 
 def get_lr(descType, lrStrat, epoch, lr, d):
+    '''
+    Gets the learning rate given an algorithm and the current epoch
+
+    :param descType:
+    :param lrStrat:
+    :param epoch:
+    :param lr:
+    :param d:
+    :return:
+    '''
     if descType not in ["adaGrad"]:
         if lrStrat == "epochPro":
             if descType == "randExp":
@@ -496,6 +612,8 @@ tqdm = partial(tqdm, position=0, leave=True)
 def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs = 100, batch_size = 1, regLamb = 1,fake = False,
                      easyBin = False, projDim = -1, decInterval = 200, quickie = 0, descType ="gradDesc", gamma=1/8):
     '''
+    Entry-point for each descent algorithm.
+
     :param data: dataframe containing train and test data
     :param lrStrat: learning rate for Gradient Descent. if "epochPro", then lr is proportional to epoch. Otherwise a scalar
     :param n_epochs: how many epochs to train for
@@ -614,6 +732,8 @@ def gradient_descent(data, opt,u_optimal = None, lrStrat = "epochPro", n_epochs 
             epochAccsTrainSimple.append(accTrainSimple)
             epochAccsTestSimple.append(accTestSimple)
 
+            #in the initial version of this code, I had an inner loop for each mini-batch. However, that is
+            #not in the spirit of online learning, so I dropped inner loop
             break
 
         allLosses.append(np.mean(epochLosses))
